@@ -16,23 +16,6 @@ def write_ipynb(data: dict, filename: str) -> None:
         json.dump(data, outfile)
     return
 
-def modify_source(cells):
-    if '#' in ''.join(cells['source']) and cells['source'][0][:2] != '##':
-        res = []
-        num = 0
-        for elem in cells['source']:
-            elem = elem.strip()
-            if '#' in elem:
-                if '#' == elem[0]:
-                    res.append(elem)
-                else:
-                    line = elem.split('#')
-                    res.append('# '+line[-1])
-                num += 1
-        if num  > 0:
-            res.append('')
-        cells['source'] = res
-
 def clear_badge(data):
     if 'Open In Colab' in data['cells'][0]['source'][0]:
         data['cells'].pop(0)
@@ -45,7 +28,7 @@ def add_badge(data, outfilename):
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    f"[![Open In Colab](../notebooks/colab-badge.png)](https://colab.research.google.com/github/zoldbirka/colab-test-pub/blob/master/{outfilename})"
+    f"[![Open In Colab](colab-badge.png)](https://colab.research.google.com/github/zoldbirka/colab-test-pub/blob/master/{outfilename})"
         ]
     }
     data['cells'].insert(0,first_input)
@@ -55,14 +38,10 @@ def add_badge(data, outfilename):
 def main():
     # parancssori argumentumok kezelése
     len_argv = len(sys.argv)
-    if  1 < len_argv <= 3:
+    if  len_argv == 2:
         filename = sys.argv[1]
         filename_base = os.path.basename(filename)
         name, ext = os.path.splitext(filename_base)
-        outfilename = name + "_URES" + ext
-        if len_argv == 3:
-            outdir = sys.argv[2]
-            outfilename = os.path.join(outdir, outfilename)
     else:
         sys.exit('No filename given!')
 
@@ -73,21 +52,13 @@ def main():
         sys.exit("No such file: %s"%filename)
 # fájl feldolgozása
     clear_badge(data)
-    add_badge(data, outfilename)
-
-    for cells in data['cells']:
-        if cells['cell_type'] == 'code':
-            modify_source(cells)
-            cells['outputs'] = []    
+    add_badge(data, filename)
+ 
 # fájl mentése 
     try:
-        write_ipynb(data, outfilename)
+        write_ipynb(data, filename)
     except FileNotFoundError:
-        sys.exit("No such dictionary: %s"%outfilename)
-
-    convert_str = "cd ./notebooks\n"
-    convert_str += f'jupyter nbconvert --to pdf {filename_base} --output ../_pdf/{name}.pdf'
-    subprocess.run(convert_str, shell=True)
+        sys.exit("No such dictionary: %s"%filename)
     return 0
 
 if __name__ == "__main__":
