@@ -85,7 +85,7 @@ def main():
     except FileNotFoundError:
         sys.exit("No such dictionary: %s"%outfilename)
 
-    conv_pdf = False
+    conv_pdf = True
     if conv_pdf:
         convert_str = "cd ./notebooks\n"
         convert_str += f'jupyter nbconvert --to pdf {filename_base} --output ../_pdf/{name}.pdf'
