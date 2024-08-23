@@ -24,10 +24,10 @@ def modify_source(cells):
             elem = elem.strip()
             if '#' in elem:
                 if '#' == elem[0]:
-                    res.append(elem)
+                    res.append(elem + '\n')
                 else:
                     line = elem.split('#')
-                    res.append('# '+line[-1])
+                    res.append('# '+line[-1]+'\n')
                 num += 1
         if num  > 0:
             res.append('')
@@ -85,9 +85,11 @@ def main():
     except FileNotFoundError:
         sys.exit("No such dictionary: %s"%outfilename)
 
-    convert_str = "cd ./notebooks\n"
-    convert_str += f'jupyter nbconvert --to pdf {filename_base} --output ../_pdf/{name}.pdf'
-    subprocess.run(convert_str, shell=True)
+    conv_pdf = False
+    if conv_pdf:
+        convert_str = "cd ./notebooks\n"
+        convert_str += f'jupyter nbconvert --to pdf {filename_base} --output ../_pdf/{name}.pdf'
+        subprocess.run(convert_str, shell=True)
     return 0
 
 if __name__ == "__main__":
