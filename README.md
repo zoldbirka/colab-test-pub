@@ -1,3 +1,3 @@
-Collection of jupyter notebook for introductory Python cours
+Collection of jupyter notebook for introductory Python course
 
-A bevezetés a Python programozásba kurzus anyagai
+A "Bevezetés a Python programozásba" kurzus anyagai
